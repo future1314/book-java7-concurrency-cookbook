@@ -28,7 +28,7 @@ public class ThreadExecutor {
         while (true) {
             TimeUnit.SECONDS.sleep(1);
             server.showInfo();
-            if (server.tryEndServer()) {
+            if (server.tryEndServer()) {//
                 break;
             }
         }
@@ -50,10 +50,11 @@ public class ThreadExecutor {
              * submit()方法来提交FactorialCalculator任务给执行者。这个方法返回Future<Integer>对象来管理任务，
              * 并且最终获取它的结果。
              */
+            System.out.print(".number: " + number);
             Future<Integer> result = executor.submit(new FactorialCalculator(number));
             results.add(result);
         }
-
+        System.out.println("...");
         while (executor.getActiveCount() > 0) {
             TimeUnit.SECONDS.sleep(1);
             System.out.print("active: " + executor.getActiveCount() + "  completed: " + executor.getCompletedTaskCount() + "  status:");
@@ -73,7 +74,7 @@ public class ThreadExecutor {
              * 执行，并且返回它的结果。如果线程在get()方法上等待结果时被中断，它将抛出InterruptedException
              * 异常。如果call()方法抛出 异常，这个方法会抛出ExecutionException异常。
              */
-            System.out.print("final result: " + future.get());
+            System.out.println("final result: " + future.get());///按提交的顺序获得结果。
         }
         System.out.println();
 
@@ -92,7 +93,7 @@ public class ThreadExecutor {
         tasks.add(new CallableTask("Task-1"));
         tasks.add(new CallableTask("Task-2"));
         /**
-         * 通过一个Collection的数据结构传递给 invokeAny 方法，返回结果是第一个执行结束的任务，另一个任务被中断。
+         * 通过一个Collection的数据结构传递给 invokeAny 方法，返回结果是第一个执行结束的任务，另一个任务被中断。////被中断的任务还继续执行吗？
          */
         Integer result = executor.invokeAny(tasks);
         System.out.println("The first finished task took " + result + " seconds.");
@@ -114,9 +115,8 @@ public class ThreadExecutor {
          */
         List<Future<Integer>> results = executor.invokeAll(tasks);
 
-        for (Future<Integer> result :
-                results) {
-            System.out.print(" " + result.get());
+        for (Future<Integer> result : results) {
+            System.out.print(". " + result.get());
         }
         System.out.println();
     }
@@ -143,7 +143,8 @@ public class ThreadExecutor {
          * 监测ExecutorService是否已经关闭，若关闭则返回true，否则返回false。一般情况下会和shutdown方法组合使用。
          */
         executor.shutdown();
-        executor.awaitTermination(100, TimeUnit.SECONDS);
+        System.out.println("Main: "+executor.awaitTermination(5, TimeUnit.SECONDS));///提前结束任务。
+        //System.out.println("Main: "+executor.awaitTermination(100, TimeUnit.SECONDS));
 
         System.out.println("Main: All finished.");
     }
@@ -165,7 +166,7 @@ public class ThreadExecutor {
         ScheduledFuture<?> scheduled = executor.scheduleAtFixedRate(new RunnableTask("scheduled"), 1, 2, TimeUnit.SECONDS);
 
         for (int i = 0; i < 50; i++) {
-            // 使用getDelay方法查询距离下次周期启动还有多久，如果任务执行时间比周期间隔长，则有可能是负值
+            // 使用getDelay方法查询距离下次周期启动还有多久，如果任务执行时间比周期间隔长，则有可能是负值///?
             System.out.println("Main: Delay " + scheduled.getDelay(TimeUnit.SECONDS) + "  Active count: " + executor.getActiveCount());
             TimeUnit.SECONDS.sleep(1);
         }
@@ -201,7 +202,7 @@ public class ThreadExecutor {
         }
 
         executor.shutdown();
-        executor.awaitTermination(20, TimeUnit.SECONDS);
+        //executor.awaitTermination(20, TimeUnit.SECONDS);
     }
 
     /**
@@ -225,22 +226,22 @@ public class ThreadExecutor {
 
         /**
          * 以下两个while语句都可以用于取出执行结果。
-         * 分别用 take() 方法和 poll() 方法，take方法会等待结果就绪；而poll方法会直接返回，如果没有就绪的结果返回null。
+         * 分别用 take() 方法和 poll() 方法，take方法会等待结果就绪；而poll方法会直接返回，如果没有就绪的结果返回null。//null ?
          */
-//        while (executor.getActiveCount() > 0) {
-//            System.out.println(completionService.take().get());
-//        }
-
         while (executor.getActiveCount() > 0) {
-            TimeUnit.SECONDS.sleep(1);
-            Future<Integer> result;
-            while ((result = completionService.poll()) != null) {
-                System.out.println(result.get());
-            }
+            System.out.println(completionService.take().get());
         }
 
+//        while (executor.getActiveCount() > 0) {
+//            TimeUnit.SECONDS.sleep(1);
+//            Future<Integer> result;
+//            while ((result = completionService.poll()) != null) {
+//                System.out.println((result.get()==null?"null":result.get()));
+//            }
+//        }
+
         executor.shutdown();
-        executor.awaitTermination(50, TimeUnit.SECONDS);
+        executor.awaitTermination(10, TimeUnit.SECONDS);
     }
 
     /**
@@ -258,11 +259,11 @@ public class ThreadExecutor {
             executor.submit(new CallableTask("Task-" + i));
         }
 
-        executor.shutdown();
+        //executor.shutdown();
 
         // 在shutdown()方法和执行者结束之间，提交任务给执行者，这个任务将被拒绝，因为执行者不再接收新的任务。
         executor.submit(new RunnableTask("TaskRejected"));
-
-        executor.awaitTermination(10, TimeUnit.SECONDS);
+        //executor.shutdown();///放到这里 没有被拒绝。
+        executor.awaitTermination(10, TimeUnit.SECONDS);///是否去掉 差别很大。
     }
 }
