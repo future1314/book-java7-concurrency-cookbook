@@ -12,7 +12,7 @@ public class VideoConference implements Runnable {
 
     public void linkedIn(String name) {
         // 计数
-        countDownLatch.countDown();
+        countDownLatch.countDown();//ok
         System.out.println(name + " has linked in. Waiting for the rest " + countDownLatch.getCount() + " participants.");
     }
 
@@ -20,7 +20,7 @@ public class VideoConference implements Runnable {
     public void run() {
         try {
             // 在countDownLatch的计数值减为0之前会一直wait
-            countDownLatch.await();
+            countDownLatch.await();///ok
             System.out.println("All the paticipants have arrived, let's begin.");
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -19,6 +19,6 @@ public class Participant implements Runnable {
             e.printStackTrace();
         }
 
-        conference.linkedIn(name);
+        conference.linkedIn(name);///我来签到了。
     }
 }
