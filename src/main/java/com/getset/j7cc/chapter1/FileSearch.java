@@ -3,7 +3,8 @@ package com.getset.j7cc.chapter1;
 import java.io.File;
 import java.nio.file.Files;
 
-public class FileSearch implements Runnable {
+//public class FileSearch implements Runnable {
+public class FileSearch extends Thread {
     private String initPath;
     private String fileName;
 
@@ -41,7 +42,12 @@ public class FileSearch implements Runnable {
         if (file.getName().equals(fileName)) {
             System.out.println(Thread.currentThread().getName() + " : " + file.getAbsolutePath());
         }
-        if (Thread.interrupted()) {
+//        if (Thread.interrupted()) {
+//            System.out.println(Thread.currentThread().getName() + " : : " + Thread.interrupted());
+//            throw new InterruptedException();
+//        }
+        if (isInterrupted()) {//runnable 没有此方法。
+            System.out.println(Thread.currentThread().getName() + " : : " + Thread.interrupted());
             throw new InterruptedException();
         }
     }

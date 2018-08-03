@@ -92,7 +92,7 @@ public class ThreadManagement {
             e.printStackTrace();
         }
 
-        task.interrupt();
+        task.interrupt();//ok
     }
 
     /**
@@ -101,17 +101,19 @@ public class ThreadManagement {
      */
     @Test
     public void testInterrupt2() {
-        FileSearch searcher = new FileSearch("/home/kang", ".gitignore");
-        Thread task = new Thread(searcher);
-        task.start();
-
+        //FileSearch searcher = new FileSearch("/Users/spring/dev/new/book-java7-concurrency-cookbook", ".gitignore");
+        FileSearch searcher = new FileSearch("/Users/spring/dev/new", ".gitignore");
+//        Thread task = new Thread(searcher);
+//        task.start();
+        searcher.start();
         try {
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(1*0);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        task.interrupt();
+//        task.interrupt();
+        searcher.interrupt();
     }
 
     /**

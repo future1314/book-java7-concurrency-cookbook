@@ -15,10 +15,14 @@ public class PrimeGenerator extends Thread {
              * 第一个不会改变interrupted属性值，但是第二个会设置成false。
              * interrupted() 方法是一个静态方法，建议使用isInterrupted()方法。
              */
-            if (isInterrupted()) {
-                System.out.println("The Prime Generator has been interrupted.");
+            if (isInterrupted()) {//ok
+                System.out.println("The Prime Generator has been interrupted."+Thread.interrupted());
                 return;
             }
+//            if (Thread.interrupted()) {//ok
+//                System.out.println("The Prime Generator has been interrupted."+Thread.interrupted());
+//                return;
+//            }
             number++;
         }
     }
@@ -28,7 +32,7 @@ public class PrimeGenerator extends Thread {
             return true;
         }
         for (long i = 2; i < number; i++) {
-            if (number % i == 0) {
+            if (number % i == 0) {///怎么求质数。
                 return false;
             }
         }
